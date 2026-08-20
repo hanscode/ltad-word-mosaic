@@ -134,9 +134,9 @@ src/
   styles.css                Visual styling
   mosaic-renderer.js        Lung-mask rendering and word-cloud layout
   word-store.js             In-memory counts and input-format validation
-  instances.js              Frequency data to drawable word instances
-  palette.js                Word color tiers
-  seed-data.js              Sample data and simulated-submission pool
+  instances.js              Count-based sizing; real and ghost instances
+  palette.js                Count-based green tiers and placeholder grey
+  seed-data.js              Sample data, campaign frame words, demo pool
 ```
 
 ## Rendering approach
@@ -145,10 +145,56 @@ src/
 The renderer applies the mask before running wordcloud2, keeping words inside
 the lung silhouette and away from the central gap.
 
-Word sizes are relative to frequency. Repeated submissions increase the count
-of one normalized entry instead of producing duplicate entries. Additional
-smaller instances help maintain visual density, while a light placeholder layer
-keeps the lungs recognizable when the wall contains few or no contributions.
+The wall is drawn as two layers.
+
+**Real words.** Every accepted unique word is drawn exactly once. A repeated
+submission never adds a second copy; it raises that word's count, which raises
+its size and deepens its colour.
+
+Size comes from a word's own count, not from its share of the current leader,
+on a logarithmic curve between a minimum and a maximum:
+
+```text
+size = minSize + (maxSize - minSize) x ln(count) / ln(40)
+```
+
+So a first submission starts small but clearly legible, grows noticeably with
+the early repeats, and flattens out as counts climb — a word cannot dominate the
+lungs just by being the only one on the wall. Colour follows the same principle:
+count 1 is a mid-light campaign green, and each threshold above it steps toward
+dark green. Both are deterministic, so a word's appearance is stable between
+renders.
+
+**The lung frame.** A light-grey layer fills whatever the real words did not
+take, so the lungs read as a solid mass of type in every state rather than a few
+words floating in an outline. A lung cannot be drawn from three submissions, or
+from thirty-five unique submissions at one instance each, so the frame repeats —
+as the client reference does, where `LUNG TRANSPLANTS` appears about eight times.
+The rule that a duplicate grows instead of repeating applies to *contributions*.
+
+The frame is built from the campaign's own language (`FRAME_WORDS` in
+`seed-data.js`): the campaign name and abbreviation, the date, the tagline
+"Inhale gratitude and exhale hope", and the founding sponsor. It deliberately
+does **not** reuse the feeling-words people submit. When it did, a grey `HOPE`
+sat beside a green `HOPE`, which read both as a duplicate contribution and as a
+suggestion of what to type. Every entry is branding or a phrase, so none can be
+mistaken for a one-word submission.
+
+Frame words are laid out *after* the real words, on a scratch canvas seeded with
+them, so wordcloud2 treats each contribution as occupied space and no
+placeholder is ever positioned across one. Laying the two layers out
+independently puts grey words straight through the green ones — `destination-over`
+stops grey covering green, but not from being interleaved through it. The frame
+recedes on its own as real words claim more of the lungs; no opacity fade is
+involved.
+
+**Placement.** wordcloud2 silently skips any word it cannot fit. Real words are
+laid out with `shrinkToFit`, which retries an unplaceable word at a smaller size
+within the same pass, and the `wordclouddrawn` event is used to record what
+actually landed. If a word still could not be placed, the whole real layer is
+laid out again at a reduced scale, up to a bounded number of attempts. Anything
+unplaced after that is reported to the console and on `data-unplaced` on the
+stage element, rather than disappearing without a trace.
 
 ## Credits
 

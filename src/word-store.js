@@ -15,7 +15,7 @@ export const REJECTIONS = {
   empty: 'Add a word first — one word, up to 20 characters.',
   multiword: 'One word only, please.',
   tooLong: `Max ${MAX_LENGTH} characters.`,
-  characters: 'Letters and numbers only.'
+  characters: 'Use letters, numbers, apostrophes, or hyphens only.'
 };
 
 /** Returns null when acceptable, otherwise a key of REJECTIONS. */
