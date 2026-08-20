@@ -1,0 +1,75 @@
+# Local design references
+# Client-supplied comps and mockups kept alongside the code for convenience.
+# They are not part of the deliverable and some are not ours to redistribute.
+lung_sample.png
+/reference/
+*.psd
+*.ai
+*.sketch
+*.fig
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.fseventsd
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+Icon?
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+.directory
+.Trash-*
+.nfs*
+
+# Editors and IDEs
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.\#*
+\#*\#
+
+# Node — the prototype has no build step, but the WordPress plugin phase will
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.pnpm-store/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Build output and logs
+dist/
+build/
+.cache/
+*.log
+
+# PHP / WordPress (plugin phase)
+vendor/
+composer.lock
+wp-config-local.php
