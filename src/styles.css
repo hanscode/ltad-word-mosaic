@@ -1,0 +1,224 @@
+:root {
+  --ink: #14251a;
+  --ink-soft: #5c6b5f;
+  --ink-faint: #7f8c80;
+  --green: #0f6b2d;
+  --green-dark: #0b5622;
+  --line: #dfe4df;
+  --field: #fbfcfb;
+  --error: #a4451f;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--ink);
+  font-family: Archivo, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--green); text-decoration: none; }
+a:hover { color: var(--ink); }
+
+.wall {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  padding: 56px 28px 80px;
+}
+
+.wall__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  max-width: 720px;
+  text-align: center;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2e8b57;
+}
+
+.wall__title {
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+
+.wall__intro {
+  margin: 0;
+  max-width: 520px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.mosaic {
+  position: relative;
+  width: 100%;
+  max-width: 940px;
+}
+
+.mosaic__stage { position: relative; width: 100%; }
+
+.mosaic__layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 620ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mosaic__layer[data-front="true"] { opacity: 1; }
+.mosaic__layer[data-front="false"] { pointer-events: none; }
+
+.mosaic__mask { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+.mosaic__tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.mosaic__empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.mosaic__empty strong {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.mosaic__empty span { font-size: 15px; color: var(--ink-soft); }
+
+/* display:flex above would otherwise defeat the hidden attribute */
+.mosaic__empty[hidden] { display: none; }
+
+.compose {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  max-width: 620px;
+}
+
+.compose__row { display: flex; gap: 10px; width: 100%; flex-wrap: wrap; }
+
+.compose__input {
+  flex: 1 1 240px;
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--field);
+  color: var(--ink);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  outline: none;
+  transition: border-color 180ms, background 180ms;
+}
+
+.compose__input:focus { border-color: #2e8b57; background: #fff; }
+.compose__input::placeholder { color: #a9b3a9; }
+
+.compose__submit {
+  padding: 16px 24px;
+  border: none;
+  border-radius: 10px;
+  background: var(--green);
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 180ms, transform 180ms;
+}
+
+.compose__submit:hover { background: var(--green-dark); }
+.compose__submit:active { transform: translateY(1px); }
+
+.compose__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.compose__helper { margin: 0; font-size: 13px; color: var(--ink-faint); }
+.compose__helper[data-error="true"] { color: var(--error); }
+
+.compose__stats {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+.compose__modes { display: flex; gap: 18px; width: 100%; }
+
+.compose__mode {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ink-faint);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  border-bottom: 1px solid var(--line);
+}
+
+.compose__mode:hover { color: var(--green); border-bottom-color: currentColor; }
+
+@media (max-width: 640px) {
+  .wall { padding: 36px 18px 56px; gap: 28px; }
+  .wall__title { font-size: 30px; }
+}
