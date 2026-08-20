@@ -9,9 +9,9 @@
 
 import { ASPECT, MosaicRenderer } from './mosaic-renderer.js';
 import { WordStore, validate, REJECTIONS } from './word-store.js';
-import { SEED_WORDS, DEMO_POOL } from './seed-data.js';
+import { SEED_WORDS, DEMO_POOL, FRAME_WORDS } from './seed-data.js';
 
-const HELPER_DEFAULT = 'Enter 1 word • Max 20 characters • Submissions are moderated in real time';
+const HELPER_DEFAULT = 'Enter 1 word • Max 20 characters';
 const DEMO_INTERVAL = 7000;
 const HIGHLIGHT_HOLD = 1600;
 
@@ -45,11 +45,27 @@ const renderer = new MosaicRenderer({
   canvasA: dom.canvasA,
   canvasB: dom.canvasB,
   maskEl: dom.mask,
-  placeholders: SEED_WORDS,
+  // The frame is campaign branding, not the submission vocabulary: reusing
+  // SEED_WORDS here put a grey HOPE beside a green one, which read as a
+  // duplicate contribution and as a suggestion of what to type.
+  placeholders: FRAME_WORDS,
   onHover: showTip,
   onSwap: (front) => {
     dom.canvasA.dataset.front = String(front === 0);
     dom.canvasB.dataset.front = String(front === 1);
+  },
+  // The renderer shrinks and then re-lays-out to fit every accepted word. If a
+  // word still could not be placed, say so rather than losing it silently —
+  // the wall would otherwise disagree with the counters.
+  onPlacement: ({ placed, missing, scale }) => {
+    if (missing.length) {
+      console.warn(
+        `[mosaic] ${missing.length} word(s) could not be placed at scale ${scale.toFixed(2)}:`,
+        missing.join(', ')
+      );
+    }
+    dom.stage.dataset.placed = String(placed.length);
+    dom.stage.dataset.unplaced = String(missing.length);
   }
 });
 
